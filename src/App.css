@@ -1,0 +1,26 @@
+.App {
+  text-align: center;
+}
+
+
+
+
+.location{
+ content: '';
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+.height {
+  background: lightblue;
+  min-height: 100%;
+  width: 100%;
+  position: absolute;
+  padding-right: 25px;
+}

@@ -1,0 +1,49 @@
+.flexRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin: 40px 0px 0;
+ 
+  }
+
+  .flexRowButton{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+
+  .center {
+    margin: auto;
+    width: 50%;
+    border: 3px solid green;
+    padding: 10px;
+
+  }
+
+  .upTriangle {
+    width: 0; 
+    height: 0; 
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 30px solid #435058;
+  }
+
+
+
+  .pushLeft{
+    position: relative;
+    left: 40px;
+  }
+
+  .heightInside{
+    background: #A8D9F8;
+    min-height: 100%;
+    width: 100%;
+    position: absolute;
+    padding-right: 25px;
+  }
+  
