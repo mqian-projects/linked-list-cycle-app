@@ -45,10 +45,19 @@ export default class LinkedListVisualizer extends Component {
         if(this.visualizationInProcess()){
           alert("Please wait for current visualization to end before proceeding.");
         } else if(cyclePresent){
+            this.resetNodes();
             this.animateTransversalWithCycle();
         } else {
+            this.resetNodes();
             this.animateTransversalNoCycle();
         }
+    }
+
+    resetNodes(){
+        for(let i = 0; i < this.state.numberOfNodes; i++) {
+            document.getElementById(`node-${i}`).className = 'node';
+        }
+        return;
     }
     
     animateTransversalNoCycle() {
@@ -370,7 +379,7 @@ export default class LinkedListVisualizer extends Component {
             <div className="pushLeft">
             <div className="flexRow">
                 {grid.map((node) => {
-                    const {location, data, isHead, isTail, isInvis, nextNode} = node;
+                    const {location, data, nextNode} = node;
                     
                     if(location === (numberOfNodes - 1) && this.state.cyclePresent){
                         return(
@@ -381,9 +390,6 @@ export default class LinkedListVisualizer extends Component {
                             location={location}
                             data={data}
                             key={location}
-                            isHead={isHead}
-                            isTail={isTail}
-                            isInvis={isInvis}
                             nextNode={nextNode}
                             />
                             </div>
@@ -402,9 +408,6 @@ export default class LinkedListVisualizer extends Component {
                             location={location}
                             data={data}
                             key={location}
-                            isHead={isHead}
-                            isTail={isTail}
-                            isInvis={isInvis}
                             nextNode={nextNode}
                             />
                             <Pointer></Pointer>
@@ -426,9 +429,6 @@ export default class LinkedListVisualizer extends Component {
                             location={location}
                             data={data}
                             key={location}
-                            isHead={isHead}
-                            isTail={isTail}
-                            isInvis={isInvis}
                             nextNode={nextNode}
                             />
                             
