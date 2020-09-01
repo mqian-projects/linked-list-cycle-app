@@ -1,0 +1,77 @@
+.node{
+    width: 80px;
+    height: 80px;
+    border: 2px solid black;
+    position: relative;
+    background: #FEF9EF;
+  }
+
+
+
+
+
+  .node-head{
+    background: #FEF9EF;
+    position: relative;
+    height: 80px;
+    width: 80px;
+    border: 2px solid black;
+  }
+
+  .node-walk{
+    position: relative;
+    height: 80px;
+    width: 80px;
+    border: 2px solid black;
+    background-color: #FFFF00;
+    animation-name: walkAnimation;
+    animation-duration: 1s;
+  }
+
+  @keyframes walkAnimation{
+    0%{
+        background-color: white;
+    }
+    100%{
+        background-color: #FFFF00;
+    }
+  }
+
+  .node-run{
+    position: relative;
+    height: 80px;
+    width: 80px;
+    border: 2px solid black;
+    background-color: #FE6D73;
+    animation-name: runAnimation;
+    animation-duration: 1s;
+  }
+  
+  @keyframes runAnimation{
+    0%{
+        background-color: white;
+    }
+    100%{
+        background-color: #FE6D73;
+    }
+  }
+
+  .node-join{
+    position: relative;
+    height: 80px;
+    width: 80px;
+    border: 2px solid black;
+    background-color: #66ff00;
+    animation-name: joinAnimation;
+    animation-duration: 1s;
+  }
+  
+  @keyframes joinAnimation{
+    0%{
+        background-color: white;
+    }
+    100%{
+        background-color: #66ff00;
+    }
+  }
+  
