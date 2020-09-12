@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
-import {useTransition, animated} from 'react-spring';
 import Node from './Node/Node';
-import './LinkedListVisualizer.css';
 import Pointer from './Node/Pointer';
-import InputBox from '../Components/InputBox';
 
 export default class LinkedListVisualizer extends Component {
     constructor(){
@@ -19,7 +16,6 @@ export default class LinkedListVisualizer extends Component {
             cycleLength: 0,
             nodeWidth: 0,
             downArrowWidth: 30,
-            counter: 0,
             windowWidth: 0,
             windowHeight: 0,
         }
@@ -40,17 +36,12 @@ export default class LinkedListVisualizer extends Component {
       }
 
     visualizeTransversal() {
-        const {grid, cyclePresent, numberOfNodes} = this.state;
-
         if(this.visualizationInProcess()){
           alert("Please wait for current visualization to end before proceeding.");
-        } else if(cyclePresent){
-            this.resetNodes();
-            this.animateTransversalWithCycle();
-        } else {
-            this.resetNodes();
-            this.animateTransversalNoCycle();
-        }
+        } 
+        
+        this.resetNodes();
+        this.animateTransversal();
     }
 
     resetNodes(){
@@ -59,48 +50,13 @@ export default class LinkedListVisualizer extends Component {
         }
         return;
     }
-    
-    animateTransversalNoCycle() {
-        const {grid, numberOfNodes} = this.state;
-        let i = 0;
-        var timer;
-        let prevRunNode;
-        let prevWalkNode;
-        let currRunNode;
-        let currWalkNode;
 
-        var checker = () => {
-            if(i > 0){
-                prevRunNode.className = 'node';
-                prevWalkNode.className = 'node';
-            }
 
-            if(i == numberOfNodes){
-                clearInterval(timer);
-                return;
-            }
-
-            if(2*i < numberOfNodes){
-                currRunNode = document.getElementById(`node-${2*i}`);
-                currRunNode.className = 'node-run';
-                prevRunNode = currRunNode;
-            }
-            
-            currWalkNode = document.getElementById(`node-${i}`);
-            currWalkNode.className = 'node-walk'; 
-            prevWalkNode = currWalkNode;
-
-            i++;
-        }
-
-        timer = setInterval(checker, 1000);
-    }
-
-    animateTransversalWithCycle() {
-        const {grid, cycleTo, cycleLength, numberOfNodes} = this.state;
-        let i = 0;
+    animateTransversal() {
+        const {cycleTo, cycleLength, numberOfNodes, cyclePresent} = this.state;
+        let updateNodesIncrement = 0;
         const cycleToInt = parseInt(cycleTo);
-        var timer;
+        let timer;
         let prevRunNode;
         let prevWalkNode;
         let currRunNode;
@@ -112,79 +68,61 @@ export default class LinkedListVisualizer extends Component {
         let cycleToEven = cycleToInt % 2 == 0;
         let setFirst = false;
         let cycleLengthEven = cycleLength % 2 == 0;
-        let runNumber = 0;
+        var updateNodes;
 
-
-        var checker = () => {
-            if(i > 0){
+        if(cyclePresent){
+        updateNodes = () => {
+            if(updateNodesIncrement > 0){
                 prevRunNode.className = 'node';
                 prevWalkNode.className = 'node';
             }
 
-            if(2 * i >= cycleToInt){
+            if(2 * updateNodesIncrement >= cycleToInt){
                 runCycle = true;
             }
 
             if(cycleToEven){
-                if(runCycle){
-                    currRunNode = document.getElementById(`node-${cycleToInt + ((2 * runCount) % cycleLength)}`);
-                    currRunNode.className = 'node-run';
-                    prevRunNode = currRunNode;
-                    runCount++;
-                } else{
-                    currRunNode = document.getElementById(`node-${2*i % numberOfNodes}`);
-                    currRunNode.className = 'node-run';
-                    prevRunNode = currRunNode;
-                }
+                let runNodeNumber = runCycle ? cycleToInt + ((2 * runCount++) % cycleLength) : 2 * updateNodesIncrement % numberOfNodes;
+                currRunNode = document.getElementById(`node-${runNodeNumber}`);
+                currRunNode.className = 'node-run';
+                prevRunNode = currRunNode;
             } else {
                 if(runCycle){
+                    //calibrating an odd number with even or odd cycle length
+                    let hold = cycleToInt + ((2 * runCount) % cycleLength);
                     if(cycleLengthEven){
-                        //calibrating on an odd number with even cycle length
-                        while(cycleToInt + ((2 * runCount) % cycleLength) + 1 != 2 * i && !setFirst){
-                            runCount++;
-                        }
-                    } else {
-                        while(cycleToInt + ((2 * runCount) % cycleLength) != 2 * i && !setFirst){
-                            runCount++;
-                        }
+                        hold = hold + 1;
                     }
+
+                    while(hold != 2 * updateNodesIncrement && !setFirst){
+                        runCount++;
+                    }
+                    
                     setFirst = true;
 
-                    if(cycleLengthEven){
-                        runNumber = cycleToInt + ((2 * runCount) % cycleLength) + 1
-                    } else {
-                        runNumber = cycleToInt + ((2 * runCount) % cycleLength)
-                    }
-
-                    currRunNode = document.getElementById(`node-${runNumber}`);
+                    let runNodeNumber = cycleLengthEven ? cycleToInt + ((2 * runCount) % cycleLength) + 1 : cycleToInt + ((2 * runCount) % cycleLength);
+                    currRunNode = document.getElementById(`node-${runNodeNumber}`);
                     currRunNode.className = 'node-run';
                     prevRunNode = currRunNode;
                     runCount++;
                 } else{
-                    currRunNode = document.getElementById(`node-${2*i % numberOfNodes}`);
+                    currRunNode = document.getElementById(`node-${2*updateNodesIncrement % numberOfNodes}`);
                     currRunNode.className = 'node-run';
                     prevRunNode = currRunNode;
                 }
             }
                 
+            walkCycle = updateNodesIncrement == cycleToInt ? true : false;
 
-            if(i == cycleToInt){
-                walkCycle = true;
-            }
+            let walkNodeNumber = walkCycle ? cycleToInt + (walkCount++ % cycleLength) : updateNodesIncrement % numberOfNodes;
+            currWalkNode = document.getElementById(`node-${walkNodeNumber}`);
+            currWalkNode.className = 'node-walk'; 
+            prevWalkNode = currWalkNode;
 
-            if(walkCycle){
-                currWalkNode = document.getElementById(`node-${cycleToInt + (walkCount % cycleLength)}`);
-                currWalkNode.className = 'node-walk'; 
-                prevWalkNode = currWalkNode;
-                walkCount++;
-            } else {
-                currWalkNode = document.getElementById(`node-${i % numberOfNodes}`);
-                currWalkNode.className = 'node-walk'; 
-                prevWalkNode = currWalkNode;
-            }                
-            i++;
 
-            if(i !== 0 && i  !== 1 && currWalkNode == currRunNode){
+            updateNodesIncrement++;
+
+            if(updateNodesIncrement > 1 && currWalkNode == currRunNode){
                 prevWalkNode.className = 'node';
                 prevRunNode.className = 'node';
                 currWalkNode.className = 'node-join';
@@ -194,19 +132,41 @@ export default class LinkedListVisualizer extends Component {
 
 
         }
+    } else {
+        updateNodes = () => {
+            if(updateNodesIncrement > 0){
+                prevRunNode.className = 'node';
+                prevWalkNode.className = 'node';
+            }
 
-        checker();
-        timer = setInterval(checker, 1000);
+            if(updateNodesIncrement == numberOfNodes){
+                clearInterval(timer);
+                return;
+            }
+
+            if(2 * updateNodesIncrement < numberOfNodes){
+                currRunNode = document.getElementById(`node-${2*updateNodesIncrement}`);
+                currRunNode.className = 'node-run';
+                prevRunNode = currRunNode;
+            }
+            
+            currWalkNode = document.getElementById(`node-${updateNodesIncrement}`);
+            currWalkNode.className = 'node-walk'; 
+            prevWalkNode = currWalkNode;
+
+            updateNodesIncrement++;
+        }
+    }
+
+        updateNodes();
+        timer = setInterval(updateNodes, 1000);
     }
 
     handleNodeDataChange = idx => event => {
         event.preventDefault();
-        const newNodeData = this.state.inputGrid.map((inputBox, bidx) => {
-            if(idx !== bidx) return inputBox;
-            return {...inputBox, data: event.target.value};
-        })
-
-        this.setState({ inputGrid : newNodeData});
+        let updatedNodes = this.state.inputGrid.slice();
+        updatedNodes[idx].data = event.target.value;
+        this.setState({ inputGrid: updatedNodes });
     }
 
     handleAddNode = (event) => {
@@ -220,15 +180,14 @@ export default class LinkedListVisualizer extends Component {
         } else if(!this.state.cyclePresent && numberOfNodes < nodeLimit){
             this.setState({
                 grid : this.state.grid.concat([createNode(newData, this.state.numberOfNodes)]),
-                numberOfNodes : this.state.numberOfNodes + 1
-            }, () => {console.log(this.state.numberOfNodes, 'numberOfNodes')})    
-
+                numberOfNodes : this.state.numberOfNodes + 1,
+                inputGrid: this.state.inputGrid.concat([{ data: "" }])
+            }, () => {console.log(this.state.numberOfNodes, 'numberOfNodes')});    
         } else if(numberOfNodes >= nodeLimit) {
-            alert("Cannot add node, exceeds node limit for browser window size.")
+            alert("Cannot add node, exceeds node limit for browser window size.");
         } else{
             alert("Cannot add node, cycle is present.");
         }
-        this.setState({inputGrid : this.state.inputGrid.concat([{ data: "" }])})
     }
 
     handleCycleBox = (event) => {
@@ -266,15 +225,7 @@ export default class LinkedListVisualizer extends Component {
     handleClearBoard = () => {
         const {grid, numberOfNodes} = this.state;
 
-        var inProcess = false;
-        for(let i = 0; i < numberOfNodes; i++){
-            const currNode = document.getElementById(`node-${i}`);
-            if(currNode.className == 'node-walk' || currNode.className == 'node-run'){
-                inProcess = true;
-            }
-        }
-
-        if(inProcess){
+        if(this.visualizationInProcess()){
             alert("Please wait for visualization to finish before clearing the board.")
         } else {
             this.setState({
@@ -288,7 +239,6 @@ export default class LinkedListVisualizer extends Component {
                 cycleLength: 0,
                 nodeWidth: 0,
                 downArrowWidth: 30,
-                counter: 0
             })    
         }
     }
@@ -379,7 +329,7 @@ export default class LinkedListVisualizer extends Component {
             <div className="pushLeft">
             <div className="flexRow">
                 {grid.map((node) => {
-                    const {location, data, nextNode} = node;
+                    const {location, data, isWalk, isRun} = node;
                     
                     if(location === (numberOfNodes - 1) && this.state.cyclePresent){
                         return(
@@ -390,7 +340,9 @@ export default class LinkedListVisualizer extends Component {
                             location={location}
                             data={data}
                             key={location}
-                            nextNode={nextNode}
+                            isWalk={isWalk}
+                            isRun={isRun}
+
                             />
                             </div>
                             
@@ -408,7 +360,8 @@ export default class LinkedListVisualizer extends Component {
                             location={location}
                             data={data}
                             key={location}
-                            nextNode={nextNode}
+                            isWalk={isWalk}
+                            isRun={isRun}
                             />
                             <Pointer></Pointer>
 
@@ -429,7 +382,8 @@ export default class LinkedListVisualizer extends Component {
                             location={location}
                             data={data}
                             key={location}
-                            nextNode={nextNode}
+                            isWalk={isWalk}
+                            isRun={isRun}
                             />
                             
                             <Pointer></Pointer>
@@ -488,10 +442,9 @@ const createNode = (newData, nodeNumber) => {
         location: nodeNumber,
         key: nodeNumber,
         data: newData,
-        isHead: nodeNumber === 0,
-        isTail: false,
-        isInvis: false,
-        nextNode: nodeNumber + 1
+        nextNode: nodeNumber + 1,
+        isWalk: false,
+        isRun: false
     }
     
 }

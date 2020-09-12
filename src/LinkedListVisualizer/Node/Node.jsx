@@ -3,8 +3,8 @@ import './Node.css'
 
 export default class Node extends Component {
   render() {
-      const { location, data, isHead, isTail, isInvis, isWalk, isRun } = this.props;
-      const newClassName = isHead ? "node-head" : isWalk ? "node-walk" : isRun ? "node-run" : "node";
+      const { location, data, isWalk, isRun, isJoin } = this.props;
+      const newClassName = isWalk ? "node-walk" : isRun ? "node-run" : isJoin ? "node-join" : "node";
 
     return (
     <div 
